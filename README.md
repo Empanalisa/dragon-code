@@ -10,9 +10,9 @@ A game that teaches CS1 topics. Players explore a kingdom map, solve coding chal
 
 ## Team
 - Elisa (mentor)
-- [name]
-- [name]
-- [name]
+- Rosalie
+- Cali
+
 
 ## Current tasks
 **Week 1 (planning)**
@@ -26,5 +26,4 @@ A game that teaches CS1 topics. Players explore a kingdom map, solve coding chal
 - [ ] Task 6: Design the first dragon
 - [ ] Task 7: Connect the game loop (stretch)
 
-## Shared folder
-[Google Drive link]
+
