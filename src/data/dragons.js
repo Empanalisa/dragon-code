@@ -6,6 +6,7 @@ export const DRAGONS = {
     rarity: 'Common',
     chance: 60,
     image: '/images/dragon-byteena.png',
+    icon: '/images/dragon-icon.png',
     blurb: 'Loves to peek at the top of every stack.',
     power: { id: 'peek', name: 'Peek', text: 'Takes away one wrong answer.' },
   },
@@ -13,6 +14,7 @@ export const DRAGONS = {
     rarity: 'Rare',
     chance: 30,
     image: '/images/dragon-lifo.png',
+    icon: '/images/dragon-lifo-icon.png',
     blurb: 'Last into the cave, first out every morning.',
     power: { id: 'hint', name: 'Hint', text: 'Shows the hint before you answer.' },
   },
@@ -20,6 +22,7 @@ export const DRAGONS = {
     rarity: 'Legendary',
     chance: 10,
     image: '/images/dragon-overflow.png',
+    icon: '/images/dragon-overflow-icon.png',
     blurb: 'Grew so big no stack could hold it.',
     power: { id: 'double', name: 'Double', text: 'Your next right answer pays double coins.' },
   },
@@ -47,7 +50,7 @@ export function rollDragon() {
 export function powersFor(dragons) {
   return DRAGON_NAMES.filter((name) => dragons.includes(name)).map((name) => ({
     ...DRAGONS[name].power,
-    image: DRAGONS[name].image,
+    image: DRAGONS[name].icon,
     uses: dragonLevel(dragons, name),
   }));
 }

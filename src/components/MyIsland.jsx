@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { IslandScene } from './IslandScene.jsx';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 const EMPTY = { question: '', answers: ['', '', '', ''], correctIndex: null, hint: '', explanation: '' };
 
-// My Island: write your own questions, then practice them like a village.
-export function MyIsland({ questions, onAdd, onDelete, onPractice, onClose }) {
+// My Island: your own land with your dragons, plus your own study questions.
+export function MyIsland({ dragons, island, onIslandChange, questions, onAdd, onDelete, onPractice, onClose }) {
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState({});
   const [saved, setSaved] = useState(false);
@@ -53,8 +54,12 @@ export function MyIsland({ questions, onAdd, onDelete, onPractice, onClose }) {
       </div>
       <div>
         <h1 className="screen-title">My Island</h1>
-        <p className="muted screen-subtitle">Write questions from your class notes, then practice them here.</p>
+        <p className="muted screen-subtitle">Your dragons live here. Decorate it, and write your own study questions below.</p>
       </div>
+
+      <IslandScene dragons={dragons} island={island} onChange={onIslandChange} />
+
+      <h2 style={{ fontSize: 28, marginTop: 12 }}>Study questions</h2>
 
       <div className="island-grid">
         {/* Write a question */}

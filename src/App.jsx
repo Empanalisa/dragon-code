@@ -9,6 +9,7 @@ import { MyIsland } from './components/MyIsland.jsx';
 import { VILLAGES } from './data/challenges.js';
 import { rollDragon, powersFor } from './data/dragons.js';
 import { loadSave, writeSave, clearSave, dayString } from './data/save.js';
+import { START_ISLAND } from './data/island.js';
 import './App.css';
 
 const EGG_COST = 20;
@@ -17,7 +18,7 @@ const COINS_PER_REVIEW = 5; // every right answer in Review
 const DAILY_BONUS = 10; // first practice of the day
 const REVIEW_SIZE = 5;
 
-const START = { coins: 0, rewarded: [], missed: [], hasEgg: false, dragons: [], streak: { count: 0, lastDay: null }, custom: [] };
+const START = { coins: 0, rewarded: [], missed: [], hasEgg: false, dragons: [], streak: { count: 0, lastDay: null }, custom: [], island: START_ISLAND };
 const ALL_QUESTIONS = Object.values(VILLAGES).flatMap((v) => v.questions);
 
 function shuffle(list) {
@@ -36,12 +37,13 @@ function App() {
   const [dragons, setDragons] = useState(saved.dragons);
   const [streak, setStreak] = useState(saved.streak);
   const [custom, setCustom] = useState(saved.custom); // My Island questions
+  const [island, setIsland] = useState({ ...START_ISLAND, ...saved.island }); // My Island land
   const [toast, setToast] = useState(null);
 
   // Save after every change
   useEffect(() => {
-    writeSave({ coins, rewarded, missed, hasEgg, dragons, streak, custom });
-  }, [coins, rewarded, missed, hasEgg, dragons, streak, custom]);
+    writeSave({ coins, rewarded, missed, hasEgg, dragons, streak, custom, island });
+  }, [coins, rewarded, missed, hasEgg, dragons, streak, custom, island]);
 
   // Hide the toast message after a few seconds
   useEffect(() => {
@@ -156,6 +158,7 @@ function App() {
     setDragons([]);
     setStreak(START.streak);
     setCustom([]);
+    setIsland(START_ISLAND);
   }
 
   const tabs = [
@@ -226,6 +229,9 @@ function App() {
         {screen === 'tower' && <StackTower onWin={handleTowerWin} onClose={() => setScreen('practice')} />}
         {screen === 'island' && (
           <MyIsland
+            dragons={dragons}
+            island={island}
+            onIslandChange={setIsland}
             questions={custom}
             onAdd={(q) => setCustom([...custom, q])}
             onDelete={(id) => setCustom(custom.filter((q) => q.id !== id))}

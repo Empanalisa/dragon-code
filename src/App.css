@@ -334,3 +334,82 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* ---------- my island: the land ---------- */
+.island-scene {
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.14) 1.5px, transparent 1.6px) 0 0 / 28px 28px,
+    radial-gradient(ellipse at 50% 60%, #3A2766 0%, #1C1233 75%);
+  box-shadow: 0 8px 0 var(--shadow);
+}
+.island-box { position: relative; max-width: 860px; margin: 0 auto; }
+.island-svg { display: block; width: 100%; height: auto; }
+.island-sign {
+  position: absolute; left: 50%; top: 5%; transform: translateX(-50%);
+  background: var(--surface); border: 2px solid var(--border); border-radius: 999px;
+  padding: 6px 18px; font-family: 'Josefin Sans', sans-serif; font-weight: 700; font-size: 20px;
+  white-space: nowrap; max-width: 80%; overflow: hidden; text-overflow: ellipsis;
+}
+.island-empty {
+  position: absolute; left: 50%; top: 55%; transform: translate(-50%, -50%);
+  margin: 0; background: rgba(28, 18, 51, 0.85); border-radius: 12px; padding: 10px 16px;
+  font-weight: 800; text-align: center; max-width: 70%;
+}
+.resident {
+  position: absolute; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  animation: bob 2.4s ease-in-out infinite;
+}
+@keyframes bob {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -8px; }
+}
+@media (prefers-reduced-motion: reduce) { .resident { animation: none; } }
+.resident-portrait {
+  position: relative; display: block;
+  width: clamp(56px, 10vw, 88px); aspect-ratio: 1;
+  border-radius: 50%; border: 4px solid; background: var(--surface-2);
+  box-shadow: 0 4px 0 var(--shadow);
+}
+.resident-portrait img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+.resident-level {
+  position: absolute; right: -10px; bottom: -4px;
+  background: var(--gold); color: #2A1A00; border-radius: 999px; padding: 1px 8px;
+  font-size: 12px; font-weight: 900; border: 2px solid var(--shadow);
+}
+.resident-name {
+  background: var(--surface); border: 2px solid var(--border); border-radius: 999px;
+  padding: 1px 10px; font-size: 13px; font-weight: 800;
+}
+
+.decorate { display: flex; flex-direction: column; gap: 18px; }
+.ground-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.ground-option {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  background: var(--surface-2); color: var(--text); border: 2px solid var(--border);
+  border-radius: 14px; padding: 10px 12px; min-width: 96px; font: inherit; font-weight: 800; cursor: pointer;
+}
+.ground-option.on { border-color: var(--pink); box-shadow: 0 0 0 2px var(--pink); }
+.ground-option:disabled { cursor: not-allowed; opacity: 0.75; }
+.ground-swatch {
+  width: 44px; height: 44px; border-radius: 50%; border: 3px solid #1C1346;
+  display: grid; place-items: center;
+}
+.ground-option:disabled .ground-swatch { filter: grayscale(0.7) brightness(0.6); }
+.unlock-text { color: var(--locked-text); font-size: 13px; font-weight: 700; text-align: center; }
+.decor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.decor-tile {
+  display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;
+  background: var(--surface-2); border: 2px solid var(--border); border-radius: 14px; padding: 12px;
+}
+.decor-preview { width: 72px; height: 72px; }
+.decor-tile.locked .decor-preview { filter: grayscale(1) brightness(0.55); }
+.decor-button { padding: 8px 16px; font-size: 15px; }
+.lock-light { vertical-align: -2px; filter: brightness(0) invert(0.9) sepia(1) saturate(3); }
+
+@media (max-width: 720px) {
+  .island-grid { grid-template-columns: 1fr; }
+}

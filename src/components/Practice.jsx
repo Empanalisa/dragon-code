@@ -38,7 +38,7 @@ export function Practice({ streak, reviewCount, canReview, customCount, onReview
           <span className="practice-icon" style={{ background: 'var(--roost)' }}><img src="/images/icon-pencil.svg" alt="" width="32" height="32" /></span>
           <h2>My Island</h2>
           <p className="muted">
-            Write your own questions from class and practice them. Great for studying before an exam.
+            Your own land where your dragons live. Decorate it as you collect, and write your own study questions.
           </p>
           <p className="practice-stat">{customCount} of your own questions · counts for your streak</p>
           <button className="btn btn-primary" onClick={onIsland}>Open My Island</button>
