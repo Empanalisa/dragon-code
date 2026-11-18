@@ -55,10 +55,8 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; }
   box-shadow: 0 4px 0 var(--shadow); }
 .btn-primary:disabled { background: var(--surface-2); color: var(--text-muted); box-shadow: 0 5px 0 var(--shadow); }
 
-/* the starry sky behind every page */
-.stars { background-image:
-    radial-gradient(rgba(255, 255, 255, 0.55) 1px, transparent 1.6px),
-    radial-gradient(rgba(255, 240, 200, 0.35) 1px, transparent 1.6px);
-  background-size: 97px 89px, 41px 37px; background-position: 0 0, 17px 23px; }
-
-button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+/* the dot grid behind every page */
+.stars {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1.5px, transparent 1.6px);
+  background-size: 28px 28px;
+}

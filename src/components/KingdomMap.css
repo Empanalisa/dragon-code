@@ -1,0 +1,117 @@
+.kingdom { display: flex; flex-direction: column; gap: 18px; }
+.kingdom-title { font-size: 44px; line-height: 1.1; }
+.kingdom-subtitle { margin: 6px 0 0; font-size: 18px; }
+
+/* map + info bar share one rounded card */
+.map-card {
+  border: 3px solid var(--shadow);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #160E2A;
+  box-shadow: 0 6px 0 var(--shadow), 0 0 40px rgba(199, 125, 255, 0.25);
+}
+
+/* the map: purple sky + one dot grid, all CSS */
+.map-box {
+  position: relative;
+  aspect-ratio: 1000 / 560;
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.22) 1.5px, transparent 1.6px) 0 0 / 28px 28px,
+    radial-gradient(circle at 22% 12%, #7A62D6 0%, #4A3BA8 40%, #2A1F6E 100%);
+}
+
+/* land pictures, placed in % so they stay put at any size */
+.map-piece { position: absolute; display: block; }
+.mainland { left: 6.2%; top: 10%; width: 71.4%; }
+.hatchery { left: 82.4%; top: 20%; width: 11.2%; }
+.roost    { left: 79.4%; top: 62.32%; width: 16.7%; }
+.compass  { left: 2.4%; top: 73.21%; width: 8%; }
+
+.sea-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+  color: #E2DAFF;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* village buttons */
+.marker {
+  position: absolute;
+  transform: translate(-50%, -36px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.marker-chip {
+  width: 66px;
+  height: 66px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 3px solid var(--bg);
+  box-shadow: 0 5px 0 rgba(18, 10, 36, 0.55), inset 0 3px 0 rgba(255, 255, 255, 0.45);
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+.marker-icon { width: 30px; height: 30px; }
+.marker-picture { width: 100%; height: 100%; object-fit: cover; }
+.marker-name {
+  padding: 4px 12px 2px;
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  border: 2px solid var(--bg);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+}
+.marker:hover .marker-chip { filter: brightness(1.1); }
+.marker.selected .marker-chip { border-color: #FFFFFF; transform: scale(1.12); }
+.marker.selected .marker-name { border-color: #FFFFFF; }
+
+/* info bar under the map */
+.info-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-top: 3px solid var(--surface-2);
+}
+.info-panel {
+  flex: 1 1 380px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: #24173F;
+  border-radius: var(--radius);
+}
+.info-square {
+  width: 60px;
+  height: 60px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  box-shadow: 0 4px 0 var(--shadow), inset 0 3px 0 rgba(255, 255, 255, 0.4);
+}
+.info-text { min-width: 0; }
+.info-kicker { font-size: 13px; font-weight: 800; letter-spacing: 0.5px; color: var(--text-muted); }
+.info-name { font-family: var(--font-display); font-weight: 700; font-size: 26px; line-height: 1.2; }
+.info-description { font-weight: 700; color: var(--text-muted); }
+.info-description.locked { color: var(--locked-text); }
+.info-button { min-width: 220px; min-height: 60px; font-size: 22px; }

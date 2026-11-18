@@ -1,212 +1,178 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import './KingdomMap.css';
 
+// Every place on the map. x / y = where its button sits, in % across / down the map.
+// Villages (number 1-3) unlock in order; the other two places are always open.
 const TERRITORIES = [
-  { 
-    id: 'stack', 
-    name: 'Stack Village', 
-    kicker: 'VILLAGE 1 OPEN', 
-    x: 28, 
-    y: 51.8, 
-    color: '#FF708B', 
-    chip: '#FF708B', 
-    locked: false, 
-    text: 'Master LIFO stacks and data pointers to open the gates.' 
+  {
+    id: 'stack',
+    name: 'Stack Village',
+    number: 1,
+    x: 28,
+    y: 51.8,
+    color: 'var(--stack)',
+    chip: '#FFD978',
+    icon: '/images/icon-stack.svg',
+    text: 'Master push, pop and LIFO to defend the tower.',
   },
-  { 
-    id: 'queue', 
-    name: 'Queue Village', 
-    kicker: 'VILLAGE 2 LOCKED', 
-    x: 59, 
-    y: 33, 
-    color: '#31C48D', 
-    chip: '#31C48D', 
-    locked: true, 
-    text: 'Locked! Clear Stack Village to open the gates of Queue Village.' 
+  {
+    id: 'queue',
+    name: 'Queue Village',
+    number: 2,
+    x: 59,
+    y: 33,
+    color: 'var(--queue)',
+    chip: '#9ADCF0',
+    icon: '/images/icon-queue.svg',
+    text: 'Line up and learn FIFO: first in, first out.',
+    lockedText: 'Locked! Clear Stack Village to open the gates of Queue Village.',
   },
-  { 
-    id: 'array', 
-    name: 'Array Forest', 
-    kicker: 'VILLAGE 3 LOCKED', 
-    x: 59, 
-    y: 70.5, 
-    color: '#FEE140', 
-    chip: '#FEE140', 
-    locked: true, 
-    text: 'Locked! Clear previous villages to explore.' 
+  {
+    id: 'array',
+    name: 'Array Forest',
+    number: 3,
+    x: 59,
+    y: 70.5,
+    color: 'var(--array)',
+    chip: '#A3E3B4',
+    icon: '/images/icon-array.svg',
+    text: 'Find your way through the forest, one index at a time.',
+    lockedText: 'Locked! Clear Queue Village to find the path into the forest.',
   },
-  { 
-    id: 'hatchery', 
-    name: 'Hatchery Isle', 
-    kicker: 'HATCHERY', 
-    x: 88, 
-    y: 33, 
-    color: '#9061F9', 
-    chip: '#9061F9', 
-    locked: false, 
-    text: 'You can afford an egg!' 
+  {
+    id: 'hatchery',
+    name: 'Hatchery Isle',
+    kicker: 'EGG SHOP',
+    x: 88,
+    y: 33,
+    color: 'var(--hatchery)',
+    chip: 'var(--hatchery)',
+    picture: '/images/egg-icon.png',
+    text: 'Mystery eggs cost 20 coins. Each one hatches a dragon.',
+    action: 'Visit the Hatchery',
+    screen: 'hatchery',
   },
-  { 
-    id: 'roost', 
-    name: "Dragon's Roost", 
-    kicker: 'DRAGONS', 
-    x: 87.8, 
-    y: 76.4, 
-    color: '#1CADFF', 
-    chip: '#1CADFF', 
-    locked: false, 
-    text: 'View your hatched dragon collection.' 
-  }
+  {
+    id: 'roost',
+    name: "Dragon's Roost",
+    kicker: 'YOUR COLLECTION',
+    x: 87.8,
+    y: 76.4,
+    color: 'var(--roost)',
+    chip: 'var(--roost)',
+    picture: '/images/dragon-icon.png',
+    text: 'Your hatched dragons live here.',
+    action: 'View dragons',
+    screen: 'dragons',
+  },
 ];
 
-export function KingdomMap({ coins = 0, onEnterVillage, onNavigate }) {
+// cleared = which villages are finished, for example { stack: true, queue: false, array: false }
+export function KingdomMap({ coins = 0, cleared = {}, onEnterVillage, onNavigate }) {
   const [selected, setSelected] = useState('stack');
-  const active = TERRITORIES.find(t => t.id === selected) || TERRITORIES[0];
+
+  // Work out each place's state from the player's progress
+  const places = TERRITORIES.map((t) => {
+    const locked = (t.id === 'queue' && !cleared.stack) || (t.id === 'array' && !cleared.queue);
+    if (!t.number) return { ...t, locked: false };
+    const state = locked ? 'LOCKED' : cleared[t.id] ? 'CLEARED' : 'OPEN';
+    return {
+      ...t,
+      locked,
+      kicker: `VILLAGE ${t.number} · ${state}`,
+      text: locked ? t.lockedText : t.text,
+      icon: locked ? '/images/icon-lock.svg' : t.icon,
+      action: cleared[t.id] ? 'Replay village' : 'Enter village',
+    };
+  });
+  const active = places.find((t) => t.id === selected) || places[0];
+
+  // The land picture changes as villages unlock
+  let mainland = '/images/mainland.svg';
+  if (cleared.queue) mainland = '/images/mainland-all-open.svg';
+  else if (cleared.stack) mainland = '/images/mainland-queue-open.svg';
+
+  let description = active.text;
+  if (active.id === 'hatchery' && coins >= 20) description = 'You can afford an egg!';
+
+  function handleAction() {
+    if (active.number) {
+      if (onEnterVillage) onEnterVillage(active.id);
+    } else if (active.screen && onNavigate) {
+      onNavigate(active.screen);
+    }
+  }
 
   return (
-    <div style={{ padding: '32px', maxWidth: '1000px', margin: '0 auto' }}>
+    <main className="kingdom">
       {/* Heading */}
-      <h1 style={{ fontSize: '44px', fontWeight: 'bold', marginBottom: '8px', color: '#FFFFFF' }}>
-        Choose your quest
-      </h1>
-      <p style={{ fontSize: '18px', color: 'var(--muted-text, #9CA3AF)', marginBottom: '24px' }}>
-        Explore the kingdom and solve data structure challenges.
-      </p>
-
-      {/* Map Box */}
-      <div 
-        className="stars" 
-        style={{ 
-          position: 'relative', 
-          borderRadius: '28px', 
-          overflow: 'hidden', 
-          backgroundColor: '#4A3BA8', 
-          minHeight: '560px',
-          marginBottom: '24px'
-        }}
-      >
-        <svg viewBox="0 0 1000 560" style={{ width: '100%', display: 'block' }}>
-          {TERRITORIES.map((t) => {
-            const isSelected = selected === t.id;
-            return (
-              <polygon
-                key={t.id}
-                className="land"
-                points="100,100 200,80 250,180 120,200"
-                fill={t.locked ? '#2D2370' : t.color}
-                stroke={isSelected ? '#FFFFFF' : 'none'}
-                strokeWidth={isSelected ? '6' : '0'}
-                onClick={() => setSelected(t.id)}
-                style={{ cursor: 'pointer' }}
-              />
-            );
-          })}
-        </svg>
-
-        {/* Markers */}
-        {TERRITORIES.map((t) => {
-          const isSelected = selected === t.id;
-          return (
-            <button
-              key={t.id}
-              onClick={() => setSelected(t.id)}
-              style={{
-                position: 'absolute',
-                left: `${t.x}%`,
-                top: `${t.y}%`,
-                transform: `translate(-50%, -36px) ${isSelected ? 'scale(1.12)' : 'scale(1)'}`,
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                transition: 'transform 0.2s'
-              }}
-            >
-              <div 
-                style={{ 
-                  width: '66px', 
-                  height: '66px', 
-                  borderRadius: '50%', 
-                  backgroundColor: t.chip, 
-                  border: isSelected ? '4px solid #FFFFFF' : '3px solid rgba(255,255,255,0.6)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-                }}
-              >
-                {t.locked ? '🔒' : '⭐'}
-              </div>
-              <span style={{ 
-                marginTop: '6px', 
-                padding: '4px 12px', 
-                borderRadius: '999px', 
-                backgroundColor: '#1F2937', 
-                color: '#FFFFFF', 
-                fontSize: '15px', 
-                fontFamily: 'Josefin Sans, sans-serif',
-                whiteSpace: 'nowrap'
-              }}>
-                {t.name}
-              </span>
-            </button>
-          );
-        })}
+      <div>
+        <h1 className="kingdom-title">Choose your quest</h1>
+        <p className="muted kingdom-subtitle">
+          Pick a territory on the map. Clear challenges, earn coins, and hatch dragons.
+        </p>
       </div>
 
-      {/* Info Bar */}
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        backgroundColor: '#1F2937', 
-        padding: '20px', 
-        borderRadius: '20px',
-        color: '#FFFFFF',
-        gap: '20px'
-      }}>
-        <div style={{ 
-          width: '60px', 
-          height: '60px', 
-          borderRadius: '12px', 
-          backgroundColor: active.color,
-          flexShrink: 0 
-        }} />
-        
-        <div style={{ flexGrow: 1 }}>
-          <div style={{ fontSize: '12px', letterSpacing: '1px', textTransform: 'uppercase', color: active.locked ? 'var(--locked-text, #9CA3AF)' : '#9CA3AF' }}>
-            {active.kicker}
-          </div>
-          <div style={{ fontSize: '26px', fontFamily: 'Josefin Sans, sans-serif', fontWeight: 'bold', margin: '2px 0' }}>
-            {active.name}
-          </div>
-          <div style={{ fontSize: '14px', color: active.locked ? 'var(--locked-text, #D1D5DB)' : '#D1D5DB' }}>
-            {active.id === 'hatchery' && coins >= 20 ? "You can afford an egg!" : active.text}
-          </div>
+      <section className="map-card">
+        {/* Map box: background is CSS, the land is 3 pictures, markers sit on top */}
+        <div className="map-box">
+          <img src={mainland} alt="" className="map-piece mainland" />
+          <img src="/images/hatchery-isle.svg" alt="" className="map-piece hatchery" />
+          <img src="/images/dragons-roost.svg" alt="" className="map-piece roost" />
+          <img src="/images/compass.svg" alt="" className="map-piece compass" />
+          <span className="sea-label" style={{ left: '24%', top: '5%' }}>Null Ocean</span>
+          <span className="sea-label" style={{ left: '87.8%', top: '54%' }}>Sea of Syntax</span>
+
+          {/* Markers */}
+          {places.map((t) => {
+            const isSelected = selected === t.id;
+            return (
+              <button
+                key={t.id}
+                className={isSelected ? 'marker selected' : 'marker'}
+                style={{ left: `${t.x}%`, top: `${t.y}%` }}
+                onClick={() => setSelected(t.id)}
+                aria-label={t.name + (t.locked ? ', locked' : '')}
+              >
+                <span className="marker-chip" style={{ background: t.chip }}>
+                  {t.picture ? (
+                    <img src={t.picture} alt="" className="marker-picture" />
+                  ) : (
+                    <img src={t.icon} alt="" className="marker-icon" />
+                  )}
+                </span>
+                <span className="marker-name">{t.name}</span>
+              </button>
+            );
+          })}
         </div>
 
-        <div>
-          {active.id === 'stack' ? (
-            <button 
-              className="btn btn-primary" 
-              onClick={() => onEnterVillage && onEnterVillage('stack')}
-            >
-              Enter village
-            </button>
-          ) : active.locked ? (
-            <button className="btn" disabled style={{ opacity: 0.6, cursor: 'not-allowed' }}>
+        {/* Info bar */}
+        <div className="info-bar">
+          <div className="info-panel">
+            <div className="info-square" style={{ background: active.color }}>
+              {active.locked && <img src="/images/icon-lock.svg" alt="" width="28" height="28" />}
+            </div>
+            <div className="info-text">
+              <div className="info-kicker">{active.kicker}</div>
+              <div className="info-name">{active.name}</div>
+              <div className={active.locked ? 'info-description locked' : 'info-description'}>
+                {description}
+              </div>
+            </div>
+          </div>
+
+          {active.locked ? (
+            <button className="btn btn-primary info-button" disabled>
               Locked
             </button>
           ) : (
-            <button 
-              className="btn btn-primary" 
-              onClick={() => onNavigate && onNavigate(active.id)}
-            >
-              Open
+            <button className="btn btn-primary info-button" onClick={handleAction}>
+              {active.action} →
             </button>
           )}
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
